@@ -8,7 +8,7 @@ import { statisticsRouter } from './routes/statistics';
 import { categoryRouter } from './routes/categories';
 import path from 'path';  
 
-// path.join(__dirname, '.env');
+path.join(__dirname, '.env');
 
 dotenv.config();
 
@@ -33,7 +33,7 @@ app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use('/cards', cardsRouter);
-app.use('/category', categoryRouter);
+app.use('', categoryRouter);
 app.use('/statistics', statisticsRouter);
 
 startApp()
