@@ -33,7 +33,7 @@ app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use('/cards', cardsRouter);
-app.use('', categoryRouter);
+app.use('/category', categoryRouter);
 app.use('/statistics', statisticsRouter);
 
 startApp()
