@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { ICardStatistics } from '../interfaces';
-import { Statistics } from "../models/statistics";
+import { Statistics } from "../models/Statistics";
 
 export const createCardStatistics = async (req: Request, res: Response) => {
   try {
