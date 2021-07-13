@@ -22,9 +22,6 @@ export const getCategories = async (req: Request, res: Response) => {
 export const updateCategory = async (req: Request, res: Response) => {
   try {
     const { params, body, file} = req;
-    console.log(file)
-    console.log( body)
-    console.log( params)
     const { image, image_cloudinary_id } = await Category.findById(params.id) as ICategoty;
 
     if (file) {
@@ -46,11 +43,7 @@ export const updateCategory = async (req: Request, res: Response) => {
 export const createCategory = async (req: Request, res: Response) => {
   try {
     const { body, file } = req;
-    console.log(body)
-    console.log(file)
     const {secure_url, public_id} = await cloudinary.uploader.upload(file?.path);
-    console.log(public_id)
-    console.log(file)
     const category = await Category.create({ ...body, image: secure_url, image_cloudinary_id: public_id });
     res.status(200).json(category);
   } catch (error) {
