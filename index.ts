@@ -30,7 +30,7 @@ const app = express();
   }
 }
 
-const allowedOrigins = ['http://127.0.0.1:5501'];
+const allowedOrigins = ['https://staciekot-english-for-kids.netlify.app'];
 
 const options: cors.CorsOptions = {
   origin: allowedOrigins
