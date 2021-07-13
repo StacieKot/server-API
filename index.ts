@@ -1,13 +1,13 @@
-import express, { NextFunction } from 'express'
+import express from 'express'
 import mongoose from 'mongoose'
 import * as dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
-import { cardsRouter } from './routes/card';
-import { statisticsRouter } from './routes/statistics';
-import { categoryRouter } from './routes/categories';
 import path from 'path';  
-import { Request, Response } from "express";
+import { cardsRouter } from './routes/card';
+import { categoryRouter } from './routes/categories';
+import { statisticsRouter } from './routes/statistics';
+
 
 path.join(__dirname, '.env');
 
@@ -30,16 +30,14 @@ const app = express();
   }
 }
 
+const allowedOrigins = ['http://127.0.0.1:5501'];
+
+const options: cors.CorsOptions = {
+  origin: allowedOrigins
+};
+
+app.use(cors(options));
 app.use(express.json());
-app.use(cors());
-app.use(function (req : Request, res: Response, next: NextFunction) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  );
-  next();
-});
 app.use(helmet());
 app.use('/cards', cardsRouter);
 app.use('/category', categoryRouter);
