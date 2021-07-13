@@ -1,9 +1,9 @@
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
+  cloud_name: "stacie-kot",
+  api_key: 171578559596356,
+  api_secret: "XnRsvCQG9lbjEdkdFiq16hUPsi0",
 });
 
 export default cloudinary;
