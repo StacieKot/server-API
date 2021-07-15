@@ -36,7 +36,7 @@ export interface IImage extends mongoose.Document {
   url: string,
 }
 
-export interface MulterRequest extends Request {
-  file: any;
+export interface IUser extends mongoose.Document {
+  login: string,
+  password: string,
 }
-
