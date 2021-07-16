@@ -31,7 +31,7 @@ const startApp = async () => {
   }
 };
 
-const allowedOrigins = ['https://staciekot-english-for-kids.netlify.app', 'http://127.0.0.1:5501'];
+const allowedOrigins = ['https://staciekot-english-for-kids.netlify.app', 'http://127.0.0.1:5501', 'http://127.0.0.1:5500'];
 
 const options: cors.CorsOptions = {
   origin: allowedOrigins,

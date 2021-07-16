@@ -15,8 +15,8 @@ export const basiclogin = async (req : Request, res: Response) : Promise<void> =
       const token = jwt.sign({
         login,
         userId: candidate._id,
-      }, config.keys, { expiresIn: 60 * 60 });
-
+      }, config.keys, { expiresIn: 60 * 180 });
+      
       res.status(200).json({ token });
     } else {
       res.status(401);

@@ -21,6 +21,7 @@ export const getCategories = async (req: Request, res: Response): Promise<void> 
 
 export const updateCategory = async (req: Request, res: Response): Promise<void> => {
   try {
+   
     const { params, body, file } = req;
     const { image, image_cloudinary_id } = await Category.findById(params.id) as ICategoty;
 
@@ -40,7 +41,8 @@ export const updateCategory = async (req: Request, res: Response): Promise<void>
     const updatedCategory: ICategoty | null = (
       await Category.findByIdAndUpdate(params.id, data, { new: true, useFindAndModify: false })
     );
-    res.json(updatedCategory);
+
+    res.status(200).json(updatedCategory);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -49,13 +51,19 @@ export const updateCategory = async (req: Request, res: Response): Promise<void>
 export const createCategory = async (req: Request, res: Response): Promise<void> => {
   try {
     const { body, file } = req;
-    const { secure_url, public_id } = await cloudinary.uploader.upload(file?.path);
-    const category = await Category.create({
-      ...body,
-      image: secure_url,
-      image_cloudinary_id: public_id,
-    });
-    res.status(200).json(category);
+
+    if (file) {
+      const { secure_url, public_id } = await cloudinary.uploader.upload(file?.path);
+      const category = await Category.create({
+        ...body,
+        image: secure_url,
+        image_cloudinary_id: public_id,
+      });
+      res.status(200).json(category);
+    } else {
+      const category = await Category.create(body);
+      res.status(200).json(category);
+    }
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -80,10 +88,16 @@ export const deleteCategory = async (req: Request, res: Response): Promise<void>
   try {
     const { id } = req.params;
     const deletedCategory = await Category.findByIdAndDelete(id);
+
+    if (deletedCategory?.image) {
+      cloudinary.uploader.destroy(deletedCategory.image_cloudinary_id);
+    }
+
     if (deletedCategory) {
-      await cloudinary.uploader.destroy(deletedCategory.image_cloudinary_id);
       res.sendStatus(204);
     }
+    
+    res.sendStatus(204);
   } catch (error) {
     res.status(500).send(error.message);
   }

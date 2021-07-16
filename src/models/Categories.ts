@@ -4,7 +4,6 @@ import { ICategoty } from '../interfaces';
 const CategorySchema = new mongoose.Schema({
   categoryName: {
     type: String,
-    required: true,
   },
   image: {
     type: String,
