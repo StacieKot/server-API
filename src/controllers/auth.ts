@@ -16,7 +16,7 @@ export const basiclogin = async (req : Request, res: Response) : Promise<void> =
         login,
         userId: candidate._id,
       }, config.keys, { expiresIn: 60 * 180 });
-
+      
       res.status(200).json({ token });
     } else {
       res.status(401);
