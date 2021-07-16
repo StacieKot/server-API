@@ -1,10 +1,9 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 import { ICategoty } from '../interfaces';
 
-const CategorySchema =  new mongoose.Schema({
+const CategorySchema = new mongoose.Schema({
   categoryName: {
     type: String,
-    required: true
   },
   image: {
     type: String,
@@ -14,10 +13,10 @@ const CategorySchema =  new mongoose.Schema({
   },
   totalWords: {
     type: Number,
-    required: true
+    required: true,
   },
-})
+});
 
-export const Category = mongoose.model<ICategoty>('Categories', CategorySchema);
+const Category = mongoose.model<ICategoty>('Categories', CategorySchema);
 
-
+export default Category;
