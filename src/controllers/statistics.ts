@@ -30,6 +30,7 @@ export const asyncGetCardStatisticsById = async (id: string): Promise<ICardStati
 
 export const asyncDeleteCardStatisticsById = async (
   id: string,
-): Promise<void> => {
-  await Statistics.findByIdAndDelete(id);
+): Promise<ICardStatistics | null> => {
+ const deletedStatistic = await Statistics.findByIdAndDelete(id);
+ return deletedStatistic;
 };
