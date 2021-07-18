@@ -54,8 +54,12 @@ export const getCardStatisticsById = async (req: Request, res: Response) : Promi
 export const deleteCardStatisticsById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    await asyncDeleteCardStatisticsById(id);
-    res.sendStatus(204);
+    const deletedStatistic = await asyncDeleteCardStatisticsById(id);
+    if (deletedStatistic) {
+      res.sendStatus(204);
+    } else {
+      res.status(404);
+    }
   } catch (error) {
     res.status(500).send(error.message);
   }

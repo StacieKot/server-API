@@ -41,7 +41,7 @@ export const asyncDeleteCategory = async (id : string): Promise<ICategory | null
   if (deletedCategory && deletedCategory.image) {
     cloudinary.uploader.destroy(deletedCategory.image_cloudinary_id);
   }
-
+  
   return deletedCategory;
 };
 
