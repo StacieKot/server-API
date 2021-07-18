@@ -5,7 +5,7 @@ import {
   asyncGetCardStatisticsById,
   asyncGetStatistics,
   asyncUpdateCardStatistic,
-} from '../controllers/statisticsControllers';
+} from '../controllers/statistics';
 
 export const createCardStatistic = async (req: Request, res: Response) : Promise<void> => {
   try {

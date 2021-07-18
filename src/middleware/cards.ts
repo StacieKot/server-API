@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import {
   asyncCreateCard, asyncDeleteCard, asyncGetCardById, asyncGetCards, asyncUpdateCard,
-} from '../controllers/cardsControllers';
+} from '../controllers/cards';
 
 export const сreateCard = async (req : Request, res: Response): Promise<void> => {
   try {

@@ -5,7 +5,7 @@ import {
   asyncUpdateCategory,
   asyncGetCategoryById,
   asyncDeleteCategory,
-} from '../controllers/categoriesControllers';
+} from '../controllers/categories';
 
 export const getCategories = async (req : Request, res: Response) : Promise<void> => {
   try {

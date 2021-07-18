@@ -5,10 +5,10 @@ import * as dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import path from 'path';
-import authRouter from './routes/authRoutes';
-import categoryRouter from './routes/categoriesRouter';
-import statisticsRouter from './routes/statisticsRouter';
-import cardsRouter from './routes/cardRouter';
+import authRouter from './routes/auth';
+import categoryRouter from './routes/categories';
+import statisticsRouter from './routes/statistics';
+import cardsRouter from './routes/card';
 import strategy from './middleware/passport';
 
 path.join(__dirname, '.env');
@@ -25,7 +25,7 @@ const startApp = async () => {
     useFindAndModify: false,
     useUnifiedTopology: true,
   });
-  app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${PORT}`));
+  app.listen(PORT);
 };
 
 const allowedOrigins = ['https://staciekot-english-for-kids.netlify.app', 'http://127.0.0.1:5501', 'http://127.0.0.1:5500'];
