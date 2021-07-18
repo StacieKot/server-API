@@ -1,17 +1,17 @@
 import express from 'express';
 import {
-  getStatistics, 
-  getCardStatisticsById, 
-  createCardStatistics, 
-  updateCardStatistics, 
+  getStatistics,
+  getCardStatisticsById,
+  createCardStatistic,
+  updateCardStatistics,
   deleteCardStatisticsById,
-} from '../controllers/statistics';
+} from '../middleware/statistics';
 
 const statisticsRouter = express.Router();
 
 statisticsRouter.get('', getStatistics);
 statisticsRouter.get('/:id', getCardStatisticsById);
-statisticsRouter.post('', createCardStatistics);
+statisticsRouter.post('', createCardStatistic);
 statisticsRouter.put('/:id', updateCardStatistics);
 statisticsRouter.delete('/:id', deleteCardStatisticsById);
 

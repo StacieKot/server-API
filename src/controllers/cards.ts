@@ -1,13 +1,12 @@
-import { Request, Response } from 'express';
-import { ICard } from '../interfaces';
+import { ICard, IResponse } from '../interfaces';
 import Card from '../models/Cards';
 import cloudinary from '../utils/cloudinary';
 
-export const asyncCreateCard = async (req : Request): Promise<ICard> => {
-  const { word, translation, category } = req.body;
+export const asyncCreateCard = async (body: ICard, files: any): Promise<ICard> => {
+  const { word, translation, category } = body;
 
-  const imageResult = req.files && req.files.image ? await cloudinary.uploader.upload((req.files as any).image[0].path) : '';
-  const audioResult = req.files && req.files.audio ? await cloudinary.uploader.upload((req.files as any).audio[0].path, { resource_type: 'video' }) : '';
+  const imageResult = files && files.image ? await cloudinary.uploader.upload(files.image[0].path) : '';
+  const audioResult = files && files.audio ? await cloudinary.uploader.upload(files.audio[0].path, { resource_type: 'video' }) : '';
 
   const card = await Card.create({
     word,
@@ -21,144 +20,77 @@ export const asyncCreateCard = async (req : Request): Promise<ICard> => {
   return card;
 };
 
-// export const createCard = async (req : Request, res: Response) : Promise<void> => {
-//   try {
-//     const { word, translation, category } = req.body;
-
-//     const imageResult = req.files && req.files.image ? await cloudinary.uploader.upload((req.files as any).image[0].path) : '';
-//     const audioResult = req.files && req.files.audio ? await cloudinary.uploader.upload((req.files as any).audio[0].path, { resource_type: 'video' }) : '';
-
-//     const card = await Card.create({
-//       word,
-//       translation,
-//       category,
-//       image: imageResult.secure_url || '',
-//       image_cloudinary_id: imageResult.public_id || '',
-//       audio: audioResult.secure_url || '',
-//       audio_cloudinary_id: audioResult.public_id || '',
-//     });
-//     res.status(200).json(card);
-//   } catch (error) {
-//     res.status(500).send(error.message);
-//   }
-// };
-
-// export const createCard = async (req : Request, res: Response) : Promise<void> => {
-//   try {
-//     const { word, translation, category } = req.body;
-
-//     if (req.files) {
-//       const { files } = req as any;
-//       const imageResult = req.files && files.image ? await cloudinary.uploader.upload(files.image[0].path) : '';
-//       const audioResult = req.files && files.audio ? await cloudinary.uploader.upload(files.audio[0].path, { resource_type: 'video' }) : '';
-
-//       const card = await Card.create({
-//         word,
-//         translation,
-//         category,
-//         image: imageResult.secure_url || '',
-//         image_cloudinary_id: imageResult.public_id || '',
-//         audio: audioResult.secure_url || '',
-//         audio_cloudinary_id: audioResult.public_id || '',
-//       });
-//       res.status(200).json(card);
-//     } else {
-//       const card = await Card.create({ word, translation, category });
-//       res.status(200).json(card);
-//     }
-//   } catch (error) {
-//     res.status(500).send(error.message);
-//   }
-// };
-
-export const getCards = async (req: Request, res: Response) => {
-  try {
-    const { page, limit, category } = req.query;
-    const _skip = page ? Number(page) : 0;
-    const _limit = limit ? Number(limit) : 0;
-    const cursor = category
-      ? Card.collection.find({ category }).skip((_skip - 1) * _limit).limit(_limit)
-      : Card.collection.find().skip((_skip - 1) * _limit).limit(_limit);
-    const cards = {
-      count: await cursor.count(),
-      data: await cursor.toArray(),
-    };
-    res.status(200).send(cards);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
+export const asyncGetCards = async (
+  page: string | undefined,
+  limit: string | undefined,
+  category: string,
+) : Promise<IResponse<ICard>> => {
+  const _skip = page ? Number(page) : 0;
+  const _limit = limit ? Number(limit) : 0;
+  const cursor = category
+    ? Card.collection.find({ category }).skip((_skip - 1) * _limit).limit(_limit)
+    : Card.collection.find().skip((_skip - 1) * _limit).limit(_limit);
+  const cards = {
+    count: await cursor.count(),
+    data: await cursor.toArray(),
+  };
+  return cards;
 };
 
-export const getCardById = async (req: Request, res: Response) => {
-  const { id } = req.params;
-
-  try {
-    const card: ICard | null = await Card.findById(id);
-
-    if (card) {
-      return res.status(200).send(card);
-    }
-
-    res.status(404).send('card not found');
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
+export const asyncGetCardById = async (id: string) : Promise<ICard | null> => {
+  const card: ICard | null = await Card.findById(id);
+  return card;
 };
 
-export const updateCard = async (req: Request, res: Response) => {
-  try {
-    const { params, body } = req;
-    const { files } = req as any;
-    const card = await Card.findById(params.id) as ICard;
+export const asyncDeleteCard = async (id: string): Promise<ICard | null> => {
+  const deletedCard = await Card.findByIdAndDelete(id);
 
-    const { image, image_cloudinary_id, audio, audio_cloudinary_id } = card;
- 
-    if (files && files.image && image_cloudinary_id) {
-      await cloudinary.uploader.destroy(image_cloudinary_id);
-    }
-    if (files && files.audio && audio_cloudinary_id) {
-      await cloudinary.uploader.destroy(audio_cloudinary_id);
-    }
-
-    const imageResult = (files && files.image)
-      ? await cloudinary.uploader.upload(files.image[0].path)
-      : { secure_url: image, public_id: image_cloudinary_id };
-
-    const audioResult = (files && files.audio)
-      ? await cloudinary.uploader.upload(files.audio[0].path, { resource_type: 'video' })
-      : { secure_url: audio, public_id: audio_cloudinary_id };
-
-    const data = {
-      ...body,
-      image: imageResult.secure_url,
-      image_cloudinary_id: imageResult.public_id,
-      audio: audioResult.secure_url,
-      audio_cloudinary_id: audioResult.public_id,
-    };
-   
-    const updatedCard: ICard | null = await Card.findByIdAndUpdate(params.id, data, { new: true });
-    return res.status(200).json(updatedCard);
-  } catch (error) {
-    res.status(500).send(error.message);
+  if (deletedCard && deletedCard.image) {
+    cloudinary.uploader.destroy(deletedCard.image_cloudinary_id);
   }
+
+  if (deletedCard && deletedCard.audio) {
+    cloudinary.uploader.destroy(deletedCard.audio_cloudinary_id);
+  }
+
+  return deletedCard;
 };
 
-export const deleteCard = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const deletedCard = await Card.findByIdAndDelete(id);
+export const asyncUpdateCard = async (
+  id: string,
+  body: ICard,
+  files: any,
+): Promise<ICard | null> => {
+  const card = await Card.findById(id) as ICard;
 
-    if (deletedCard) {
-      if (deletedCard?.image) {
-        await cloudinary.uploader.destroy(deletedCard.image_cloudinary_id);
-      }
-  
-      if (deletedCard?.audio) {
-        await cloudinary.uploader.destroy(deletedCard.audio_cloudinary_id);
-      }
-      res.sendStatus(204);
-    }
-  } catch (error) {
-    res.status(500).send(error.message);
+  const {
+    image, image_cloudinary_id, audio, audio_cloudinary_id,
+  } = card;
+
+  if (files && files.image && image_cloudinary_id) {
+    await cloudinary.uploader.destroy(image_cloudinary_id);
   }
+
+  if (files && files.audio && audio_cloudinary_id) {
+    await cloudinary.uploader.destroy(audio_cloudinary_id);
+  }
+
+  const imageResult = (files && files.image)
+    ? await cloudinary.uploader.upload(files.image[0].path)
+    : { secure_url: image, public_id: image_cloudinary_id };
+
+  const audioResult = (files && files.audio)
+    ? await cloudinary.uploader.upload(files.audio[0].path, { resource_type: 'video' })
+    : { secure_url: audio, public_id: audio_cloudinary_id };
+
+  const data = {
+    ...body,
+    image: imageResult.secure_url,
+    image_cloudinary_id: imageResult.public_id,
+    audio: audioResult.secure_url,
+    audio_cloudinary_id: audioResult.public_id,
+  };
+
+  const updatedCard: ICard | null = await Card.findByIdAndUpdate(id, data, { new: true });
+  return updatedCard;
 };

@@ -25,7 +25,7 @@ const startApp = async () => {
     useFindAndModify: false,
     useUnifiedTopology: true,
   });
-  app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${PORT}`));
+  app.listen(PORT);
 };
 
 const allowedOrigins = ['https://staciekot-english-for-kids.netlify.app', 'http://127.0.0.1:5501', 'http://127.0.0.1:5500'];

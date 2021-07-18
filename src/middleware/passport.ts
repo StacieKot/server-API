@@ -1,6 +1,5 @@
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import mongoose from 'mongoose';
-// import { PassportStatic } from 'passport';
 import config from '../config';
 
 const User = mongoose.model('Users');

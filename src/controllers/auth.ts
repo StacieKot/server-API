@@ -28,7 +28,6 @@ export const basiclogin = async (req : Request, res: Response) : Promise<void> =
 
 export const register = async (req : Request, res: Response) : Promise<void> => {
   const { login, password } = req.body;
-  console.log(req.body)
   const candidate = await User.findOne({ login });
 
   if (candidate) {

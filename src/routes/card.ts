@@ -1,9 +1,10 @@
 import express from 'express';
 import passport from 'passport';
 import {
-  getCards, getCardById, updateCard, deleteCard,
-} from '../controllers/cards';
-import {
+  deleteCard,
+  getCardById,
+  getCards,
+  updateCard,
   сreateCard,
 } from '../middleware/cards';
 import upload from '../utils/multer';
