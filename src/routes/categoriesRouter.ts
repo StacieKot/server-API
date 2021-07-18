@@ -1,7 +1,11 @@
 import express from 'express';
 import passport from 'passport';
 import {
-  updateCategory, getCategories, createCategory, getCategoryById, deleteCategory,
+  updateCategory,
+  getCategories,
+  createCategory,
+  getCategoryById,
+  deleteCategory,
 } from '../middleware/categories';
 import upload from '../utils/multer';
 

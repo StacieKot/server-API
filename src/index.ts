@@ -5,10 +5,10 @@ import * as dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import path from 'path';
-import authRouter from './routes/auth';
-import categoryRouter from './routes/categories';
-import statisticsRouter from './routes/statistics';
-import cardsRouter from './routes/card';
+import authRouter from './routes/authRoutes';
+import categoryRouter from './routes/categoriesRouter';
+import statisticsRouter from './routes/statisticsRouter';
+import cardsRouter from './routes/cardRouter';
 import strategy from './middleware/passport';
 
 path.join(__dirname, '.env');
