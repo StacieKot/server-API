@@ -25,7 +25,7 @@ export interface ICardStatistics extends mongoose.Document {
   failures: number,
 }
 
-export interface ICategoty extends mongoose.Document {
+export interface ICategory extends mongoose.Document {
   categoryName: string,
   image: string,
   totalWords:number,
@@ -39,4 +39,9 @@ export interface IImage extends mongoose.Document {
 export interface IUser extends mongoose.Document {
   login: string,
   password: string,
+}
+
+export interface IResponse<Payload> {
+  count: number,
+  data: Array<Payload>
 }

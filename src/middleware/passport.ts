@@ -1,6 +1,6 @@
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import mongoose from 'mongoose';
-import { PassportStatic } from 'passport';
+// import { PassportStatic } from 'passport';
 import config from '../config';
 
 const User = mongoose.model('Users');
@@ -10,20 +10,14 @@ const passportOptions = {
   secretOrKey: config.keys,
 };
 
-module.exports = (passport : PassportStatic) => {
-  passport.use(
-    new Strategy(passportOptions, async (payload, done) => {
-      try {
-        const user = await User.findById(payload.userId).select('login id');
+const strategy = new Strategy(passportOptions, async (payload, done) => {
+  const user = await User.findById(payload.userId).select('login id');
 
-        if (user) {
-          done(null, user);
-        } else {
-          done(null, false);
-        }
-      } catch (error) {
-        throw error;
-      }
-    }),
-  );
-};
+  if (user) {
+    done(null, user);
+  } else {
+    done(null, false);
+  }
+});
+
+export default strategy;

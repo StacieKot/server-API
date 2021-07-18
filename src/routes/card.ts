@@ -1,13 +1,16 @@
 import express from 'express';
 import passport from 'passport';
 import {
-  createCard, getCards, getCardById, updateCard, deleteCard,
+  getCards, getCardById, updateCard, deleteCard,
 } from '../controllers/cards';
+import {
+  сreateCard,
+} from '../middleware/cards';
 import upload from '../utils/multer';
 
 const cardsRouter = express.Router();
 
-cardsRouter.post('', passport.authenticate('jwt', { session: false }), upload.fields([{ name: 'image', maxCount: 1 }, { name: 'audio', maxCount: 1 }]), createCard);
+cardsRouter.post('', passport.authenticate('jwt', { session: false }), upload.fields([{ name: 'image', maxCount: 1 }, { name: 'audio', maxCount: 1 }]), сreateCard);
 cardsRouter.get('', getCards);
 cardsRouter.get('/:id', getCardById);
 cardsRouter.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'audio', maxCount: 1 }]), updateCard);

@@ -1,8 +1,8 @@
 import express from 'express';
 import passport from 'passport';
 import {
-  getCategories, getCategoryById, updateCategory, createCategory, deleteCategory,
-} from '../controllers/categories';
+  updateCategory, getCategories, createCategory, getCategoryById, deleteCategory,
+} from '../middleware/categories';
 import upload from '../utils/multer';
 
 const categoryRouter = express.Router();
