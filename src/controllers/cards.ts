@@ -3,33 +3,73 @@ import { ICard } from '../interfaces';
 import Card from '../models/Cards';
 import cloudinary from '../utils/cloudinary';
 
-export const createCard = async (req : Request, res: Response) : Promise<void> => {
-  try {
-    const { word, translation, category } = req.body;
+export const asyncCreateCard = async (req : Request): Promise<ICard> => {
+  const { word, translation, category } = req.body;
 
-    if (req.files) {
-      const { files } = req as any;
-      const imageResult = files.image ? await cloudinary.uploader.upload(files.image[0].path) : '';
-      const audioResult = files.audio ? await cloudinary.uploader.upload(files.audio[0].path, { resource_type: 'video' }) : '';
+  const imageResult = req.files && req.files.image ? await cloudinary.uploader.upload((req.files as any).image[0].path) : '';
+  const audioResult = req.files && req.files.audio ? await cloudinary.uploader.upload((req.files as any).audio[0].path, { resource_type: 'video' }) : '';
 
-      const card = await Card.create({
-        word,
-        translation,
-        category,
-        image: imageResult.secure_url,
-        image_cloudinary_id: imageResult.public_id,
-        audio: audioResult.secure_url,
-        audio_cloudinary_id: audioResult.public_id,
-      });
-      res.status(200).json(card);
-    } else {
-      const card = await Card.create({ word, translation, category });
-      res.status(200).json(card);
-    }
-  } catch (error) {
-    console.log(error);
-  }
+  const card = await Card.create({
+    word,
+    translation,
+    category,
+    image: imageResult.secure_url || '',
+    image_cloudinary_id: imageResult.public_id || '',
+    audio: audioResult.secure_url || '',
+    audio_cloudinary_id: audioResult.public_id || '',
+  });
+  return card;
 };
+
+// export const createCard = async (req : Request, res: Response) : Promise<void> => {
+//   try {
+//     const { word, translation, category } = req.body;
+
+//     const imageResult = req.files && req.files.image ? await cloudinary.uploader.upload((req.files as any).image[0].path) : '';
+//     const audioResult = req.files && req.files.audio ? await cloudinary.uploader.upload((req.files as any).audio[0].path, { resource_type: 'video' }) : '';
+
+//     const card = await Card.create({
+//       word,
+//       translation,
+//       category,
+//       image: imageResult.secure_url || '',
+//       image_cloudinary_id: imageResult.public_id || '',
+//       audio: audioResult.secure_url || '',
+//       audio_cloudinary_id: audioResult.public_id || '',
+//     });
+//     res.status(200).json(card);
+//   } catch (error) {
+//     res.status(500).send(error.message);
+//   }
+// };
+
+// export const createCard = async (req : Request, res: Response) : Promise<void> => {
+//   try {
+//     const { word, translation, category } = req.body;
+
+//     if (req.files) {
+//       const { files } = req as any;
+//       const imageResult = req.files && files.image ? await cloudinary.uploader.upload(files.image[0].path) : '';
+//       const audioResult = req.files && files.audio ? await cloudinary.uploader.upload(files.audio[0].path, { resource_type: 'video' }) : '';
+
+//       const card = await Card.create({
+//         word,
+//         translation,
+//         category,
+//         image: imageResult.secure_url || '',
+//         image_cloudinary_id: imageResult.public_id || '',
+//         audio: audioResult.secure_url || '',
+//         audio_cloudinary_id: audioResult.public_id || '',
+//       });
+//       res.status(200).json(card);
+//     } else {
+//       const card = await Card.create({ word, translation, category });
+//       res.status(200).json(card);
+//     }
+//   } catch (error) {
+//     res.status(500).send(error.message);
+//   }
+// };
 
 export const getCards = async (req: Request, res: Response) => {
   try {
@@ -107,16 +147,15 @@ export const deleteCard = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const deletedCard = await Card.findByIdAndDelete(id);
-    
-    if (deletedCard?.image) {
-      await cloudinary.uploader.destroy(deletedCard.image_cloudinary_id);
-    }
-
-    if (deletedCard?.audio) {
-      await cloudinary.uploader.destroy(deletedCard.audio_cloudinary_id);
-    }
 
     if (deletedCard) {
+      if (deletedCard?.image) {
+        await cloudinary.uploader.destroy(deletedCard.image_cloudinary_id);
+      }
+  
+      if (deletedCard?.audio) {
+        await cloudinary.uploader.destroy(deletedCard.audio_cloudinary_id);
+      }
       res.sendStatus(204);
     }
   } catch (error) {

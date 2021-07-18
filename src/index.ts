@@ -9,6 +9,7 @@ import authRouter from './routes/auth';
 import categoryRouter from './routes/categories';
 import statisticsRouter from './routes/statistics';
 import cardsRouter from './routes/card';
+import strategy from './middleware/passport';
 
 path.join(__dirname, '.env');
 
@@ -18,17 +19,13 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 const startApp = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI as string, {
-      useCreateIndex: true,
-      useNewUrlParser: true,
-      useFindAndModify: false,
-      useUnifiedTopology: true,
-    });
-    app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${PORT}`));
-  } catch (error) {
-    console.log(error);
-  }
+  await mongoose.connect(process.env.MONGO_URI as string, {
+    useCreateIndex: true,
+    useNewUrlParser: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+  });
+  app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${PORT}`));
 };
 
 const allowedOrigins = ['https://staciekot-english-for-kids.netlify.app', 'http://127.0.0.1:5501', 'http://127.0.0.1:5500'];
@@ -38,8 +35,7 @@ const options: cors.CorsOptions = {
 };
 
 app.use(passport.initialize());
-require('./middleware/passport')(passport);
-
+passport.use(strategy);
 app.use(cors(options));
 app.use(express.json());
 app.use(helmet());
